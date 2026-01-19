@@ -19,7 +19,6 @@ class _AddItemPageState extends State<AddItemPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('เพิ่มรายการใหม่'),
-        backgroundColor: Colors.blue.shade900,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -92,21 +91,30 @@ class _AddItemPageState extends State<AddItemPage> {
               SizedBox(
                 width: double.infinity,
                 height: 52,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                child: ScaleTransition(
+                  scale: Tween(begin: 0.9, end: 1.0).animate(
+                    CurvedAnimation(
+                      parent: ModalRoute.of(context)?.animation ??
+                          AlwaysStoppedAnimation(1),
+                      curve: Curves.easeOut,
                     ),
-                    elevation: 2,
                   ),
-                  onPressed: _submitForm,
-                  child: const Text(
-                    'บันทึกรายการ',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
+                    ),
+                    onPressed: _submitForm,
+                    child: const Text(
+                      'บันทึกรายการ',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
