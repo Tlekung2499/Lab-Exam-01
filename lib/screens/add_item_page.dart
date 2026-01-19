@@ -1,0 +1,173 @@
+import 'package:flutter/material.dart';
+import '../models/shopping_item.dart';
+
+class AddItemPage extends StatefulWidget {
+  const AddItemPage({super.key});
+
+  @override
+  State<AddItemPage> createState() => _AddItemPageState();
+}
+
+class _AddItemPageState extends State<AddItemPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _quantityController = TextEditingController(text: '1');
+  final _noteController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('เพิ่มรายการใหม่'),
+        backgroundColor: Colors.blue.shade900,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Name Field
+              _buildFieldLabel('ชื่อรายการ'),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _nameController,
+                decoration: _buildInputDecoration(
+                  hintText: 'เช่น นม, ไข่, ขนม',
+                  icon: Icons.shopping_bag,
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'กรุณากรอกชื่อรายการ';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+
+              // Quantity Field
+              _buildFieldLabel('จำนวน'),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _quantityController,
+                decoration: _buildInputDecoration(
+                  hintText: '1',
+                  icon: Icons.production_quantity_limits,
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'กรุณากรอกจำนวน';
+                  }
+                  final qty = int.tryParse(value);
+                  if (qty == null || qty < 1) {
+                    return 'จำนวนต้องมากกว่า 0';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+
+              // Note Field
+              _buildFieldLabel('หมายเหตุ (ไม่บังคับ)'),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _noteController,
+                decoration: _buildInputDecoration(
+                  hintText: 'เช่น แบรนด์, ขนาด, หมายเหตุเพิ่มเติม',
+                  icon: Icons.note,
+                ),
+                maxLines: 3,
+                minLines: 2,
+              ),
+              const SizedBox(height: 32),
+
+              // Save Button
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                  ),
+                  onPressed: _submitForm,
+                  child: const Text(
+                    'บันทึกรายการ',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      final item = ShoppingItem(
+        name: _nameController.text,
+        quantity: int.parse(_quantityController.text),
+        note: _noteController.text,
+      );
+      Navigator.pop(context, item);
+    }
+  }
+
+  Widget _buildFieldLabel(String label) {
+    return Text(
+      label,
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+    );
+  }
+
+  InputDecoration _buildInputDecoration({
+    required String hintText,
+    required IconData icon,
+  }) {
+    return InputDecoration(
+      hintText: hintText,
+      prefixIcon: Icon(icon, color: Colors.blue.shade900),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey[300]!),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey[300]!),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.blue.shade900, width: 2),
+      ),
+      filled: true,
+      fillColor: Colors.grey[50],
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _quantityController.dispose();
+    _noteController.dispose();
+    super.dispose();
+  }
+}
